@@ -1,35 +1,67 @@
-# EC2 with IAM Role and S3 Access (Terraform)
+# AWS IAM + EC2 + S3 Access Control (Terraform)
 
-This project uses Terraform to provision an AWS EC2 instance with an IAM role attached that allows **read-only access to S3**.
+## 🛡️ Overview
 
-## 💡 Why This Project
+This project provisions an EC2 instance with restricted access to a private S3 bucket using IAM roles and Terraform.  
+The goal: enforce least privilege by default and eliminate the need for hardcoded credentials in cloud workloads.
 
-This is a practical example of **infrastructure-as-code** and **least-privilege IAM design** — both are core cloud engineering skills.
+---
 
-- Provision AWS resources with Terraform
-- Attach IAM roles to EC2 securely (no hardcoded credentials)
-- Enforce scoped, read-only access to S3
+## 🚀 What It Demonstrates
 
-## 🧰 What’s Included
+- **IAM Role-to-Instance Binding** – Securely attach a scoped IAM role to an EC2 instance
+- **Least Privilege Policy Design** – Define S3 access at the bucket + object level
+- **Infrastructure-as-Code** – All resources managed via Terraform (modular, reproducible)
+- **Credential Hygiene** – No hardcoded keys, no inline secrets
 
-- `aws_instance` for EC2 (Amazon Linux 2)
-- `aws_iam_role` with assume-role trust policy
-- `aws_iam_policy_attachment` for `AmazonS3ReadOnlyAccess`
-- `aws_iam_instance_profile` to bind role to EC2
-- `.gitignore` to exclude `.terraform/` and state files
+---
 
-## 📁 Folder Structure
-.
-├── main.tf               # Core Terraform configuration
-├── .gitignore            # Excludes .terraform/ and tfstate
+## 🧱 Tools & Services Used
 
-## ⚙️ How to Use
+- **AWS IAM** – Roles, policies, instance profiles
+- **AWS EC2** – Ubuntu instance to test access controls
+- **AWS S3** – Private bucket with restricted read access
+- **Terraform** – Infrastructure provisioning
+- **AWS CLI** – For manual access validation
 
-1. Clone this repo  
-2. Set a valid AMI for your region in `main.tf`  
-3. Make sure your AWS key pair is created and referenced  
-4. Run:
+---
 
-   ```bash
-   terraform init
-   terraform apply
+## 🔍 Key Files
+
+- `main.tf` – IAM role, policy, EC2 instance
+- `s3.tf` – Bucket creation + policy block
+- `outputs.tf` – Useful outputs (public IP, role name)
+- `variables.tf` – Environment configuration
+
+---
+
+## 🧪 Test Cases
+
+1. SSH into EC2 instance
+2. Run `aws s3 ls s3://your-bucket-name`
+3. Confirm access is allowed only from the EC2 instance with the attached IAM role
+4. Attempt access from unauthenticated client (should fail)
+
+---
+
+## ✅ Why This Matters
+
+Identity misconfiguration is the root cause of most cloud breaches.  
+This project shows how to build IAM policies that:
+- Minimize attack surface
+- Bind access to workload identity (not users)
+- Are reproducible and audit-friendly
+
+---
+
+## 📎 Bonus Ideas
+
+- Extend to use **VPC endpoints** for private S3 access
+- Add **CloudTrail logging** for audit visibility
+- Wrap into a **Terraform module** for reuse across accounts
+
+---
+
+## 🔗 Live Project
+
+[Back to my site → troyrcopeland.com](https://www.troyrcopeland.com)
